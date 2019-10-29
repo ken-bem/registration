@@ -1,21 +1,39 @@
 package com.staxter.registration.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 
 @Entity
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
+
     private String firstName;
     private String lastName;
+    @Column(unique = true)
     private String userName;
+
+    @Transient //Makes sure the password is not saved in the database
     private String plainTextPassword;
+
+    @JsonIgnore //Makes sure the password is not visible in the rest api.
     private String hashedPassword;
+
+    public User() {
+    }
+
+    public User(String firstName, String lastName, String userName, String plainTextPassword, String hashedPassword) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.userName = userName;
+        this.plainTextPassword = plainTextPassword;
+        this.hashedPassword = hashedPassword;
+    }
 
     public String getId() {
         return id;
